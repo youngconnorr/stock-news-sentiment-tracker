@@ -7,3 +7,4 @@ python-dotenv==1.0.0
 requests==2.31.0
 celery==5.3.6
 redis==5.0.1
+yfinance>=0.2.0

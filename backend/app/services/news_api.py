@@ -12,6 +12,40 @@ class NewsAPIService:
     def __init__(self):
         self.api_key = os.getenv("FINNHUB_API_KEY")
         self.base_url = "https://finnhub.io/api/v1"
+        self._symbols_cache: List[Dict] = []
+
+    def get_us_symbols(self) -> List[Dict]:
+        """Fetch all US stock symbols from Finnhub (cached)"""
+        if self._symbols_cache:
+            return self._symbols_cache
+
+        url = f"{self.base_url}/stock/symbol"
+        params = {
+            "exchange": "US",
+            "token": self.api_key
+        }
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+        symbols = response.json()
+
+        # Filter to common stocks and format for frontend
+        self._symbols_cache = [
+            {
+                "symbol": s.get("symbol", ""),
+                "description": s.get("description", ""),
+            }
+            for s in symbols
+            if s.get("type") == "Common Stock" and s.get("symbol")
+        ]
+
+        return self._symbols_cache
+
+    def is_valid_ticker(self, ticker: str) -> bool:
+        """Check if ticker exists in US symbols"""
+        symbols = self.get_us_symbols()
+        return any(s["symbol"] == ticker.upper() for s in symbols)
 
     def get_company_news(self, ticker: str, days: int = 7) -> List[Dict]:
         """Fetch company news from Finnhub"""

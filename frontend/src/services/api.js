@@ -21,6 +21,25 @@ export const newsAPI = {
     });
     return response.data;
   },
+
+  getTickers: async () => {
+    const response = await api.get('/api/tickers');
+    return response.data;
+  },
+};
+
+export const stockAPI = {
+  getStock: async (ticker) => {
+    const response = await api.get(`/api/stock/${ticker}`);
+    return response.data;
+  },
+
+  getHistory: async (ticker, period = '1mo', interval = '1d') => {
+    const response = await api.get(`/api/stock/${ticker}/history`, {
+      params: { period, interval }
+    });
+    return response.data;
+  },
 };
 
 export default api;

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.routes import news
+from app.routes import news, stock
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -11,6 +11,7 @@ app = FastAPI(title="Stock News Aggregator")
 
 # Register routers
 app.include_router(news.router)
+app.include_router(stock.router)
 
 app.add_middleware(
     CORSMiddleware,

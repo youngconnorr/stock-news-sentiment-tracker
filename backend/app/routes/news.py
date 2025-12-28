@@ -23,6 +23,16 @@ def article_to_dict(article: Article):
     }
 
 
+@router.get("/tickers")
+async def get_tickers():
+    """Get all valid US stock tickers (cached on frontend for autocomplete)"""
+    symbols = news_api.get_us_symbols()
+    return {
+        "tickers": symbols,
+        "count": len(symbols)
+    }
+
+
 @router.get("/news/{ticker}")
 async def get_news(
     ticker: str,
@@ -32,6 +42,10 @@ async def get_news(
 ):
     """Get news for a specific ticker"""
     ticker = ticker.upper()
+
+    # Validate ticker
+    if not news_api.is_valid_ticker(ticker):
+        raise HTTPException(status_code=404, detail=f"Invalid ticker symbol: {ticker}")
 
     # Check cache first (articles from last 24 hours)
     cache_cutoff = datetime.now() - timedelta(hours=24)
