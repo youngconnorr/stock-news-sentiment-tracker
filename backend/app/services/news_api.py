@@ -80,5 +80,37 @@ class NewsAPIService:
             if article.get("headline") and article.get("url")
         ]
 
+    def get_earnings_calendar(self, days: int = 7) -> List[Dict]:
+        """Fetch upcoming earnings for all companies in the next N days"""
+        from_date = datetime.now()
+        to_date = from_date + timedelta(days=days)
+
+        url = f"{self.base_url}/calendar/earnings"
+        params = {
+            "from": from_date.strftime("%Y-%m-%d"),
+            "to": to_date.strftime("%Y-%m-%d"),
+            "token": self.api_key
+        }
+
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+
+        data = response.json()
+        earnings = data.get("earningsCalendar", [])
+
+        return [
+            {
+                "symbol": e.get("symbol"),
+                "date": e.get("date"),
+                "hour": e.get("hour"),  # "bmo" (before market open), "amc" (after market close)
+                "eps_estimate": e.get("epsEstimate"),
+                "eps_actual": e.get("epsActual"),
+                "revenue_estimate": e.get("revenueEstimate"),
+                "revenue_actual": e.get("revenueActual"),
+            }
+            for e in earnings
+            if e.get("symbol")
+        ]
+
 
 news_api = NewsAPIService()

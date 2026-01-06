@@ -33,6 +33,19 @@ async def get_tickers():
     }
 
 
+@router.get("/earnings")
+async def get_earnings(days: int = Query(7, ge=1, le=30)):
+    """Get upcoming earnings calendar for all companies"""
+    try:
+        earnings = news_api.get_earnings_calendar(days)
+        return {
+            "earnings": earnings,
+            "count": len(earnings)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch earnings: {str(e)}")
+
+
 @router.get("/news/{ticker}")
 async def get_news(
     ticker: str,

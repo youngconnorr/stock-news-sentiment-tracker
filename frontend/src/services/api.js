@@ -26,6 +26,13 @@ export const newsAPI = {
     const response = await api.get('/api/tickers');
     return response.data;
   },
+
+  getEarnings: async (days = 7) => {
+    const response = await api.get('/api/earnings', {
+      params: { days }
+    });
+    return response.data;
+  },
 };
 
 export const stockAPI = {

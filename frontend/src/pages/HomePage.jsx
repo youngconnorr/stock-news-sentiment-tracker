@@ -1,4 +1,5 @@
 import SearchBar from '../components/SearchBar';
+import EarningsCalendar from '../components/EarningsCalendar';
 
 export default function HomePage() {
   return (
@@ -13,10 +14,8 @@ export default function HomePage() {
 
         <SearchBar />
 
-        <div className="mt-16 text-center">
-          <p className="text-gray-500">
-            Try searching: AAPL, TSLA, NVDA, MSFT, GOOGL
-          </p>
+        <div className="mt-16 max-w-3xl mx-auto">
+          <EarningsCalendar />
         </div>
       </div>
     </div>
